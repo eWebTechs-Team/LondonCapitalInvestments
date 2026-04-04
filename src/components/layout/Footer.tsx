@@ -36,7 +36,7 @@ export function Footer() {
                 {CONTACT.phoneDisplay}
               </a>
             </p>
-            <p className="text-sm">hello@londoncapitalinvestments.co.uk</p>
+            <p className="text-sm">londoncapitalinvestments@gmail.com</p>
             <p className="mt-4 text-xs text-slate-400">Social links: LinkedIn · Instagram · X</p>
           </div>
         </div>
