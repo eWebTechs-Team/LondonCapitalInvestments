@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
+import { CONTACT } from '@/config/site';
 
 export function Footer() {
   return (
@@ -29,8 +30,12 @@ export function Footer() {
           </div>
           <div>
             <h4 className="text-sm font-semibold text-white">Contact</h4>
-            <p className="mt-4 text-sm">25 St James’s Street, London, SW1A 1HA</p>
-            <p className="text-sm">+44 (0)20 7946 4800</p>
+            <p className="mt-4 text-sm">{CONTACT.fullAddress}</p>
+            <p className="text-sm">
+              <a href={CONTACT.phoneHref} className="hover:text-white">
+                {CONTACT.phoneDisplay}
+              </a>
+            </p>
             <p className="text-sm">hello@londoncapitalinvestments.co.uk</p>
             <p className="mt-4 text-xs text-slate-400">Social links: LinkedIn · Instagram · X</p>
           </div>
