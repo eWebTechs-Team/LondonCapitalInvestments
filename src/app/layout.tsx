@@ -1,7 +1,23 @@
 import type { Metadata } from 'next';
 import { Footer } from '@/components/layout/Footer';
 import { Header } from '@/components/layout/Header';
+import { BUSINESS, CONTACT } from '@/config/site';
 import './globals.css';
+
+
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  name: BUSINESS.name,
+  telephone: CONTACT.phoneSchema,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: CONTACT.addressLine1,
+    addressLocality: CONTACT.city,
+    postalCode: CONTACT.postcode,
+    addressCountry: BUSINESS.addressCountry
+  }
+};
 
 export const metadata: Metadata = {
   title: {
@@ -25,6 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-GB">
       <body>
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
         <Header />
         <main>{children}</main>
         <Footer />
