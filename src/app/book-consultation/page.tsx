@@ -2,11 +2,16 @@ import type { Metadata } from 'next';
 import { ConsultationForm } from '@/components/forms/ConsultationForm';
 import { SectionHeading } from '@/components/sections/SectionHeading';
 import { Container } from '@/components/ui/Container';
+import { loadSiteContent } from '@/lib/site-config';
 
-export const metadata: Metadata = {
-  title: 'Book Consultation',
-  description: 'Book a consultation with London Capital Investments for property, recruitment or fashion advice.'
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await loadSiteContent();
+
+  return {
+    title: 'Book Consultation',
+    description: `Book a consultation with ${site.business.name} for property, recruitment or fashion advice.`
+  };
+}
 
 export default function BookConsultationPage() {
   return (

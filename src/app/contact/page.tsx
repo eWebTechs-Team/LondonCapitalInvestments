@@ -2,14 +2,20 @@ import type { Metadata } from 'next';
 import { ContactForm } from '@/components/forms/ContactForm';
 import { SectionHeading } from '@/components/sections/SectionHeading';
 import { Container } from '@/components/ui/Container';
-import { CONTACT } from '@/config/site';
+import { loadSiteContent } from '@/lib/site-config';
 
-export const metadata: Metadata = {
-  title: 'Contact',
-  description: 'Contact London Capital Investments for general enquiries and service discussions.'
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await loadSiteContent();
 
-export default function ContactPage() {
+  return {
+    title: 'Contact',
+    description: `Contact ${site.business.name} for general enquiries and service discussions.`
+  };
+}
+
+export default async function ContactPage() {
+  const site = await loadSiteContent();
+
   return (
     <section className="py-16 sm:py-20">
       <Container>
@@ -17,15 +23,15 @@ export default function ContactPage() {
         <div className="grid gap-8 lg:grid-cols-2">
           <ContactForm />
           <div className="rounded-2xl bg-brand-night p-8 text-slate-200">
-            <h2 className="text-2xl font-semibold text-white">London Office</h2>
-            <p className="mt-4">{CONTACT.fullAddress}</p>
+            <h2 className="text-2xl font-semibold text-white">{site.contact.officeLabel}</h2>
+            <p className="mt-4">{site.contact.fullAddress}</p>
             <p className="mt-2">
-              <a href={CONTACT.phoneHref} className="hover:text-white">
-                {CONTACT.phoneDisplay}
+              <a href={site.contact.phoneHref} className="hover:text-white">
+                {site.contact.phoneDisplay}
               </a>
             </p>
-            <p className="mt-2">Monday to Friday, 09:00–18:00</p>
-            <p className="mt-2">hello@londoncapitalinvestments.co.uk</p>
+            <p className="mt-2">{site.contact.officeHours}</p>
+            <p className="mt-2">{site.contact.email}</p>
           </div>
         </div>
       </Container>
