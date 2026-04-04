@@ -96,8 +96,11 @@ jobs:
             cd "$RELEASE_PATH"
             tar -xzf release.tar.gz
             rm -f release.tar.gz
+            shopt -s dotglob
             mv release/* .
-            rmdir release
+            shopt -u dotglob
+            rm -rf release
+    
 
             ln -sfn "$SHARED_PATH/.env" "$RELEASE_PATH/.env"
 
