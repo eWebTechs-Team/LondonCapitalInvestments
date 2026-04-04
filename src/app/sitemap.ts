@@ -1,24 +1,25 @@
 import type { MetadataRoute } from 'next';
 import { blogPosts } from '@/data/posts';
 import { properties } from '@/data/properties';
+import { loadSiteContent } from '@/lib/site-config';
 
-const baseUrl = 'https://www.londoncapitalinvestments.co.uk';
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const site = await loadSiteContent();
 
-export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = ['', '/about', '/property-services', '/recruitment-services', '/fashion-services', '/properties', '/insights', '/contact', '/book-consultation'];
 
   const staticEntries = staticPages.map((path) => ({
-    url: `${baseUrl}${path}`,
+    url: `${site.seo.siteUrl}${path}`,
     lastModified: new Date()
   }));
 
   const propertyEntries = properties.map((property) => ({
-    url: `${baseUrl}/properties/${property.slug}`,
+    url: `${site.seo.siteUrl}/properties/${property.slug}`,
     lastModified: new Date()
   }));
 
   const insightEntries = blogPosts.map((post) => ({
-    url: `${baseUrl}/insights/${post.slug}`,
+    url: `${site.seo.siteUrl}/insights/${post.slug}`,
     lastModified: new Date(post.publishedAt)
   }));
 

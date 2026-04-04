@@ -1,0 +1,42 @@
+{
+  "business": {
+    "name": "London Capital Investments",
+    "legalName": "London Capital Investments",
+    "addressCountry": "GB"
+  },
+  "contact": {
+    "email": "hello@londoncapitalinvestments.co.uk",
+    "phoneDisplay": "07474 149174",
+    "phoneHref": "tel:07474149174",
+    "phoneSchema": "07474149174",
+    "addressLine1": "6-8 Hans Cres",
+    "city": "London",
+    "postcode": "SW1X 0LL",
+    "fullAddress": "6-8 Hans Cres, London SW1X 0LL",
+    "officeLabel": "London Office",
+    "officeHours": "Monday to Friday, 09:00–18:00"
+  },
+  "seo": {
+    "siteUrl": "https://www.londoncapitalinvestments.co.uk",
+    "defaultTitle": "London Capital Investments | Premium London Advisory",
+    "titleTemplate": "%s | London Capital Investments",
+    "defaultDescription": "London Capital Investments provides premium property, recruitment and fashion services across London for private clients and ambitious businesses.",
+    "ogTitle": "London Capital Investments",
+    "ogDescription": "Premium London advisory in property, recruitment and fashion services."
+  },
+  "hero": {
+    "eyebrow": "London Capital Investments",
+    "title": "Premium property, recruitment and fashion advisory for modern London ambitions.",
+    "description": "We partner with private clients and growth-focused businesses to deliver decisive outcomes with discretion, clarity and trusted execution.",
+    "primaryCtaLabel": "Book a Consultation",
+    "secondaryCtaLabel": "Explore Featured Properties"
+  },
+  "header": {
+    "consultationCtaLabel": "Book Consultation"
+  },
+  "footer": {
+    "summary": "Premium advisory across property, recruitment and fashion.",
+    "socialText": "Social links: LinkedIn · Instagram · X",
+    "copyrightSuffix": "All rights reserved."
+  }
+}

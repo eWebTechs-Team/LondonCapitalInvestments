@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Container } from '@/components/ui/Container';
+import { loadSiteContent } from '@/lib/site-config';
 
 const navItems = [
   { href: '/', label: 'Home' },
@@ -13,12 +14,14 @@ const navItems = [
   { href: '/contact', label: 'Contact' }
 ];
 
-export function Header() {
+export async function Header() {
+  const site = await loadSiteContent();
+
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur">
       <Container className="flex items-center justify-between py-4">
         <Link href="/" className="text-sm font-semibold uppercase tracking-[0.18em] text-brand-night">
-          London Capital Investments
+          {site.business.name}
         </Link>
         <nav aria-label="Main navigation" className="hidden items-center gap-5 lg:flex">
           {navItems.map((item) => (
@@ -28,7 +31,7 @@ export function Header() {
           ))}
         </nav>
         <Button href="/book-consultation" className="hidden sm:inline-flex">
-          Book Consultation
+          {site.header.consultationCtaLabel}
         </Button>
       </Container>
     </header>

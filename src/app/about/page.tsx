@@ -1,18 +1,25 @@
 import type { Metadata } from 'next';
 import { SectionHeading } from '@/components/sections/SectionHeading';
 import { Container } from '@/components/ui/Container';
+import { loadSiteContent } from '@/lib/site-config';
 
-export const metadata: Metadata = {
-  title: 'About',
-  description: 'Learn about London Capital Investments and our premium advisory approach.'
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await loadSiteContent();
 
-export default function AboutPage() {
+  return {
+    title: 'About',
+    description: `Learn about ${site.business.name} and our premium advisory approach.`
+  };
+}
+
+export default async function AboutPage() {
+  const site = await loadSiteContent();
+
   return (
     <section className="py-16 sm:py-20">
       <Container>
         <SectionHeading
-          eyebrow="About London Capital Investments"
+          eyebrow={`About ${site.business.name}`}
           title="A premium advisory partner built around trust and execution"
           description="We are a London-based firm supporting private clients and businesses through property, recruitment and fashion advisory services."
         />

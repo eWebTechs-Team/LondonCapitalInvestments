@@ -1,15 +1,17 @@
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
-import { CONTACT } from '@/config/site';
+import { loadSiteContent } from '@/lib/site-config';
 
-export function Footer() {
+export async function Footer() {
+  const site = await loadSiteContent();
+
   return (
     <footer className="bg-brand-night py-14 text-slate-300">
       <Container>
         <div className="grid gap-10 md:grid-cols-4">
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">London Capital Investments</h3>
-            <p className="mt-4 text-sm">Premium advisory across property, recruitment and fashion.</p>
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">{site.business.name}</h3>
+            <p className="mt-4 text-sm">{site.footer.summary}</p>
           </div>
           <div>
             <h4 className="text-sm font-semibold text-white">Quick Links</h4>
@@ -30,18 +32,18 @@ export function Footer() {
           </div>
           <div>
             <h4 className="text-sm font-semibold text-white">Contact</h4>
-            <p className="mt-4 text-sm">{CONTACT.fullAddress}</p>
+            <p className="mt-4 text-sm">{site.contact.fullAddress}</p>
             <p className="text-sm">
-              <a href={CONTACT.phoneHref} className="hover:text-white">
-                {CONTACT.phoneDisplay}
+              <a href={site.contact.phoneHref} className="hover:text-white">
+                {site.contact.phoneDisplay}
               </a>
             </p>
-            <p className="text-sm">hello@londoncapitalinvestments.co.uk</p>
-            <p className="mt-4 text-xs text-slate-400">Social links: LinkedIn · Instagram · X</p>
+            <p className="text-sm">{site.contact.email}</p>
+            <p className="mt-4 text-xs text-slate-400">{site.footer.socialText}</p>
           </div>
         </div>
         <p className="mt-10 border-t border-white/10 pt-5 text-xs text-slate-400">
-          © {new Date().getFullYear()} London Capital Investments. All rights reserved.
+          © {new Date().getFullYear()} {site.business.name}. {site.footer.copyrightSuffix}
         </p>
       </Container>
     </footer>
