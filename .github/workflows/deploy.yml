@@ -1,0 +1,118 @@
+name: Deploy production
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build app
+        env:
+          NODE_ENV: production
+          NEXT_TELEMETRY_DISABLED: 1
+        run: npm run build
+
+      - name: Prepare release bundle
+        run: |
+          mkdir -p dist/release
+          rsync -av \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='node_modules' \
+            --exclude='.next/cache' \
+            --exclude='dist' \
+            ./ dist/release/
+
+          cp package.json dist/release/package.json
+          cp package-lock.json dist/release/package-lock.json
+
+          if [ -d ".next" ]; then
+            mkdir -p dist/release/.next
+            rsync -av .next/ dist/release/.next/
+          fi
+
+          cd dist
+          tar -czf release.tar.gz release
+
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-tarball
+          path: dist/release.tar.gz
+
+      - name: Start ssh-agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
+
+      - name: Trust host
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${{ secrets.PROD_PORT }}" "${{ secrets.PROD_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Upload release to server
+        run: |
+          RELEASE_ID="$(date +%Y%m%d%H%M%S)"
+          echo "RELEASE_ID=$RELEASE_ID" >> $GITHUB_ENV
+
+          ssh -p "${{ secrets.PROD_PORT }}" "${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }}" \
+            "mkdir -p '${{ secrets.PROD_BASE_PATH }}/releases/${RELEASE_ID}'"
+
+          scp -P "${{ secrets.PROD_PORT }}" dist/release.tar.gz \
+            "${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }}:${{ secrets.PROD_BASE_PATH }}/releases/${RELEASE_ID}/release.tar.gz"
+
+      - name: Activate release
+        run: |
+          ssh -p "${{ secrets.PROD_PORT }}" "${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }}" << 'EOF'
+            set -eu
+
+            BASE_PATH="${{ secrets.PROD_BASE_PATH }}"
+            RELEASE_ID="${{ env.RELEASE_ID }}"
+            RELEASE_PATH="$BASE_PATH/releases/$RELEASE_ID"
+            CURRENT_PATH="$BASE_PATH/current"
+            SHARED_PATH="$BASE_PATH/shared"
+
+            cd "$RELEASE_PATH"
+            tar -xzf release.tar.gz
+            rm -f release.tar.gz
+            mv release/* .
+            rmdir release
+
+            ln -sfn "$SHARED_PATH/.env" "$RELEASE_PATH/.env"
+
+            cd "$RELEASE_PATH"
+            npm ci --omit=dev
+
+            ln -sfn "$RELEASE_PATH" "$CURRENT_PATH"
+
+            if pm2 describe lci-site > /dev/null 2>&1; then
+              pm2 startOrReload "$SHARED_PATH/ecosystem.config.js" --update-env
+            else
+              pm2 start "$SHARED_PATH/ecosystem.config.js" --update-env
+            fi
+
+            pm2 save
+
+            find "$BASE_PATH/releases" -mindepth 1 -maxdepth 1 -type d | sort | head -n -5 | xargs -r rm -rf
+          EOF
